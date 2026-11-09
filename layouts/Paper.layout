@@ -16,7 +16,7 @@ FrameWidgetClass rootFrame {
    vexactpos 0
    hexactsize 0
    vexactsize 0
-   imageTexture "Kas_Notes/layouts/loot_paper_co.edds"
+   imageTexture "sm_notes/layouts/loot_paper_co.edds"
    mode blend
    "src alpha" 1
    "no wrap" 1
@@ -35,7 +35,8 @@ FrameWidgetClass rootFrame {
      vexactsize 1
      "text color" 0 0 0 1
      font "gui/fonts/sdf_MetronLight24"
-     "exact text" 0
+     "exact text" 1
+     "exact text size" 24
      lines 16
      "limit visible" 1
     }
@@ -43,7 +44,7 @@ FrameWidgetClass rootFrame {
      visible 0
      color 0 0 0 1
      position 244.888 106.861
-     size 464.50201 30
+     size 464.50201 567.41705
      hexactpos 1
      vexactpos 1
      hexactsize 1
@@ -54,7 +55,7 @@ FrameWidgetClass rootFrame {
      "exact text" 1
      "exact text size" 24
      "size to text h" 0
-     "size to text v" 1
+     "size to text v" 0
      wrap 1
     }
    }

@@ -24,8 +24,11 @@ class PaperHudManager
 	{
 		if ( GetGame().GetUIManager().GetMenu() && hud)
 		{
+			// Persist before Back(): the widget tree is destroyed by the engine on close.
+			hud.SaveText();
 			GetGame().GetUIManager().Back();
 			GetGame().GetMission().GetHud().ShowQuickbarUI( true );
+			hud = null;
 		}
 	}
 }

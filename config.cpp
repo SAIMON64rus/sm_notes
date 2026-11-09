@@ -3,13 +3,13 @@
 // Separate rootclasses: Disabled, Automatic comments: Enabled
 
 class CfgMods {
-	class Kas_Notes {
-		dir = "Kas_Notes";
+	class sm_notes {
+		dir = "sm_notes";
 		picture = "";
 		action = "";
 		hideName = 1;
 		hidePicture = 1;
-		name = "Kas_Notes";
+		name = "sm_notes";
 		credits = "Kactet";
 		author = "Kactet";
 		authorID = "0";
@@ -18,29 +18,24 @@ class CfgMods {
 		type = "mod";
 		
 		class defs {
-			class gameScriptModule {
-				value = "";
-				files[] = {"Kas_Notes/scripts/3_Game"};
-			};
-			
 			class worldScriptModule {
 				value = "";
-				files[] = {"Kas_Notes/scripts/4_World"};
+				files[] = {"sm_notes/scripts/4_World"};
 			};
 			
 			class missionScriptModule {
 				value = "";
-				files[] = {"Kas_Notes/scripts/5_Mission"};
+				files[] = {"sm_notes/scripts/5_Mission"};
 			};
 		};
 	};
 };
 
 class CfgPatches {
-	class Kas_Notes {
+	class sm_notes {
 		units[] = {};
 		weapons[] = {};
 		requiredVersion = 0.1;
-		requiredAddons[] = {};
+		requiredAddons[] = {"DZ_Data","DZ_Scripts"};
 	};
 };
