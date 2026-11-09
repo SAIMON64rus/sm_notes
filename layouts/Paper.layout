@@ -1,0 +1,63 @@
+FrameWidgetClass rootFrame {
+ position -100 0
+ size 797.578 800
+ halign center_ref
+ valign center_ref
+ hexactpos 1
+ vexactpos 1
+ hexactsize 1
+ vexactsize 1
+ {
+  ImageWidgetClass Img {
+   ignorepointer 1
+   position 0 0
+   size 1 1
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   imageTexture "Kas_Notes/layouts/loot_paper_co.edds"
+   mode blend
+   "src alpha" 1
+   "no wrap" 1
+   stretch 1
+   "flip u" 1
+   "flip v" 0
+   {
+    MultilineEditBoxWidgetClass EditBox {
+     visible 0
+     color 0 0 0 1
+     position 244.888 106.861
+     size 464.50201 567.41705
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     "text color" 0 0 0 1
+     font "gui/fonts/sdf_MetronLight24"
+     "exact text" 0
+     lines 16
+     "limit visible" 1
+    }
+    MultilineTextWidgetClass TxtBox {
+     visible 0
+     color 0 0 0 1
+     position 244.888 106.861
+     size 464.50201 30
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     "text color" 0 0 0 1
+     "text offset" 5 5
+     font "gui/fonts/sdf_MetronLight24"
+     "exact text" 1
+     "exact text size" 24
+     "size to text h" 0
+     "size to text v" 1
+     wrap 1
+    }
+   }
+  }
+ }
+}
