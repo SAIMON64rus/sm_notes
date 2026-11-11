@@ -4,12 +4,14 @@ modded class MissionGameplay
 	{
 		super.OnInit();
 
-		g_PHM		= new PaperHudManager();
+		g_PHM = new PaperHudManager();
 	}
 
 	override void OnKeyPress(int key)
 	{
 		super.OnKeyPress(key);
-		g_PHM.OnKeyPress(key);
+
+		if (g_PHM)
+			g_PHM.OnKeyPress(key);
 	}
 }

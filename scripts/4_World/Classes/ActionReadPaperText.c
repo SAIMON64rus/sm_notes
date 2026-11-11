@@ -33,7 +33,7 @@ class ActionReadPaperText: ActionSingleUseBase
 	override void OnStartClient( ActionData action_data )
 	{
 		Paper pp = Paper.Cast(action_data.m_MainItem);
-		if (pp)
+		if (pp && g_PHM)
 		{
 			pp.RequestPaperData();
 			g_PHM.RequestPaperHud(0);

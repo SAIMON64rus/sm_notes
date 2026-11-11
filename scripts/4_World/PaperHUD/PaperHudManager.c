@@ -5,29 +5,38 @@ class PaperHudManager
 	void OnKeyPress(int key)
 	{
 		switch (key)
-        {
-            case KeyCode.KC_ESCAPE:
+		{
+			case KeyCode.KC_ESCAPE:
 				CloseMenu();
-            break;
-        }
+			break;
+		}
 	}
 
 	void RequestPaperHud(int type)
 	{
-		if (hud || GetGame().GetUIManager().GetMenu()) return;
-		GetGame().GetMission().GetHud().ShowQuickbarUI( false );
-        hud = new PaperHUD(type);
-        GetGame().GetUIManager().ShowScriptedMenu( hud, NULL );
+		if (hud || GetGame().GetUIManager().GetMenu())
+			return;
+
+		Mission mission = GetGame().GetMission();
+		if (mission && mission.GetHud())
+			mission.GetHud().ShowQuickbarUI(false);
+
+		hud = new PaperHUD(type);
+		GetGame().GetUIManager().ShowScriptedMenu(hud, NULL);
 	}
 
 	void CloseMenu()
 	{
-		if ( GetGame().GetUIManager().GetMenu() && hud)
+		if (hud && GetGame().GetUIManager().GetMenu())
 		{
 			// Persist before Back(): the widget tree is destroyed by the engine on close.
 			hud.SaveText();
 			GetGame().GetUIManager().Back();
-			GetGame().GetMission().GetHud().ShowQuickbarUI( true );
+
+			Mission mission = GetGame().GetMission();
+			if (mission && mission.GetHud())
+				mission.GetHud().ShowQuickbarUI(true);
+
 			hud = null;
 		}
 	}

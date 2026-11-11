@@ -5,20 +5,20 @@ class PaperHUD extends UIScriptedMenu
 	private MultilineEditBoxWidget 	m_EditBox;
 
 	private int						m_Type;
-	private string					m_Message;
 	private bool					m_Saved;
-	private bool					m_Reflow;
 
 	private const string TexturePath = "sm_notes/layouts/loot_paper_co.edds";
 
 	void PaperHUD(int type)
-    {
-        GetGame().GetMission().PlayerControlDisable(INPUT_EXCLUDE_ALL);
+	{
+		Mission mission = GetGame().GetMission();
+		if (mission)
+			mission.PlayerControlDisable(INPUT_EXCLUDE_ALL);
 		m_Type = type;
-    }
+	}
 
-    void ~PaperHUD()
-    {
+	void ~PaperHUD()
+	{
 		if (!GetGame())
 			return;
 
@@ -28,7 +28,12 @@ class PaperHUD extends UIScriptedMenu
 		Mission mission = GetGame().GetMission();
 		if (mission)
 			mission.PlayerControlEnable(true);
-    }
+
+		// release the manager's reference even when the menu was closed by the engine
+		// (death, disconnect) instead of CloseMenu() - otherwise the next note never opens
+		if (g_PHM && g_PHM.hud == this)
+			g_PHM.hud = null;
+	}
 
 	//! Sends the edited text to the server. MUST be called before UIManager.Back():
 	//! once the menu is closed the widget tree is gone and GetText() can no longer be read,
@@ -42,7 +47,6 @@ class PaperHUD extends UIScriptedMenu
 
 		string text;
 		m_EditBox.GetText(text);
-		text = Paper.WrapNoteText(text);
 
 		PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
 		Paper pp;
@@ -52,17 +56,14 @@ class PaperHUD extends UIScriptedMenu
 			return;
 
 		pp.RPCSingleParam(-9048573, new Param1<string>(text), true, null);
-		// keep the local copy in sync with the server, otherwise the client still offers
-		// "Write" on a note that already has text (ActionCondition reads this field)
+		// keep the local copy in sync with the server so both sides show the same note
 		pp.SetPaperText(text);
 		m_Saved = true;
-
-		Print("[sm_notes] client save len=" + text.Length());
 	}
 
 	override Widget Init()
 	{
-		layoutRoot 	= GetGame().GetWorkspace().CreateWidgets("sm_notes/layouts/Paper.layout");
+		layoutRoot = GetGame().GetWorkspace().CreateWidgets("sm_notes/layouts/Paper.layout");
 		if (!layoutRoot)
 			return null;
 
@@ -81,7 +82,9 @@ class PaperHUD extends UIScriptedMenu
 		else
 		{
 			if (m_EditBox)
+			{
 				m_EditBox.Show(true);
+			}
 		}
 
 		return layoutRoot;
@@ -89,31 +92,39 @@ class PaperHUD extends UIScriptedMenu
 
 	void SetText(string msg)
 	{
-		m_Message = msg;
-		string wrapped = Paper.WrapNoteText(msg);
+		string wrapped = msg;
 		if (m_TxtBox)
 			m_TxtBox.SetText(wrapped);
 		if (m_EditBox)
 			m_EditBox.SetText(wrapped);
+
+		// an RPC with the note text can arrive right after the menu opened and steal
+		// the focus from the edit box, leaving the player unable to type
+		FocusEditBox();
 	}
 
-	//! The edit box does not wrap by itself: without this every character past the
-	//! 25th on a line is drawn outside the paper and the player cannot see it.
-	override bool OnChange(Widget w, int x, int y, bool finished)
+	//! Keyboard input only reaches the edit box when it has focus; UIScriptedMenu does not
+	//! focus widgets automatically (vanilla does it by hand: chatinputmenu.c:58).
+	void FocusEditBox()
 	{
-		if (w == m_EditBox && !m_Reflow && m_EditBox)
-		{
-			string txt;
-			m_EditBox.GetText(txt);
-			string wrapped = Paper.WrapNoteText(txt);
-			if (wrapped != txt)
-			{
-				m_Reflow = true;
-				m_EditBox.SetText(wrapped);
-				m_Reflow = false;
-			}
-		}
-
-		return super.OnChange(w, x, y, finished);
+		if (m_Type != 0 && m_EditBox)
+			SetFocus(m_EditBox);
 	}
+
+	override void OnShow()
+	{
+		super.OnShow();
+		FocusEditBox();
+	}
+
+	override void Update(float timeslice)
+	{
+		super.Update(timeslice);
+
+		// with the edit box focused ESC can be consumed by the widget, so close the note
+		// the same way the vanilla note menu does (5_mission/gui/notemenu.c:130-138)
+		if (g_PHM && g_PHM.hud == this && GetUApi().GetInputByID(UAUIBack).LocalPress())
+			g_PHM.CloseMenu();
+	}
+
 }
